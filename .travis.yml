@@ -12,8 +12,6 @@ before_cache:
   # Delete all ivydata files since ivy touches them on each build
   - find $HOME/.ivy2/cache -name "ivydata-*.properties" | xargs rm
 
-before_install:
-  - sudo apt-get install -y dbus-x11
 before_script:
   - "mkdir -p ~/tmp/bin"
   - "pushd ~/tmp/bin && wget -c https://github.com/mozilla/geckodriver/releases/download/v0.24.0/geckodriver-v0.24.0-linux64.tar.gz && tar -xzvf geckodriver-v0.24.0-linux64.tar.gz && popd"
@@ -23,6 +21,8 @@ addons:
   firefox: "latest"
   apt:
     update: true
+    packages:
+      - dbus-x11
 
 notifications:
   webhooks:
