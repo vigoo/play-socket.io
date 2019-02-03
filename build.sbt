@@ -1,9 +1,11 @@
 import com.typesafe.sbt.SbtScalariform.ScalariformKeys
 import de.heikoseeberger.sbtheader.HeaderPattern
 import play.core.PlayVersion.{current => playVersion}
-val AkkaVersion = "2.5.3"
 
-lazy val runPhantomjs = taskKey[Unit]("Run the phantomjs tests")
+val AkkaVersion = "2.5.19"
+val seleniumVersion = "3.141.59"
+
+lazy val runBrowserTests = taskKey[Unit]("Run the browser tests")
 
 playBuildRepoName in ThisBuild := "play-socket.io"
 sonatypeProfileName in ThisBuild := "com.lightbend"
@@ -32,8 +34,9 @@ lazy val root = (project in file("."))
       "com.softwaremill.macwire" %% "macros" % "2.3.0" % Test,
 
       // Test dependencies for running phantomjs
-      "ch.racic.selenium" % "selenium-driver-helper-phantomjs" % "2.1.1" % Test,
-      "com.github.detro" % "ghostdriver" % "2.1.0" % Test,
+      "org.seleniumhq.selenium" % "selenium-api" % seleniumVersion,
+      "org.seleniumhq.selenium" % "selenium-support" % seleniumVersion,
+      "org.seleniumhq.selenium" % "selenium-firefox-driver" % seleniumVersion,
 
       // Test framework dependencies
       "org.scalatest" %% "scalatest" % "3.0.1" % Test,
@@ -47,7 +50,7 @@ lazy val root = (project in file("."))
     fork in Test := true,
     connectInput in (Test, run) := true,
 
-    runPhantomjs := {
+    runBrowserTests := {
       (runMain in Test).toTask(" play.socketio.RunSocketIOTests").value
     },
 
@@ -60,7 +63,7 @@ lazy val root = (project in file("."))
 
     test in Test := {
       (test in Test).value
-      runPhantomjs.value
+      runBrowserTests.value
     },
 
     resolvers += "jitpack" at "https://jitpack.io",

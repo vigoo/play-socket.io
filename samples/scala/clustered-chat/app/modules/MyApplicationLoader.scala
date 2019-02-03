@@ -1,7 +1,7 @@
 package modules
 
 import chat.ChatEngine
-import play.api.{ApplicationLoader, BuiltInComponents, BuiltInComponentsFromContext, LoggerConfigurator}
+import play.api.{ ApplicationLoader, BuiltInComponents, BuiltInComponentsFromContext, LoggerConfigurator }
 import com.softwaremill.macwire._
 import controllers.AssetsComponents
 import play.api.inject.DefaultApplicationLifecycle
@@ -17,10 +17,8 @@ class MyApplicationLoader extends ApplicationLoader {
 }
 
 trait MyApplication extends BuiltInComponents
-  with AssetsComponents
-  with SocketIOComponents {
-
-  override def applicationLifecycle: DefaultApplicationLifecycle
+    with AssetsComponents
+    with SocketIOComponents {
 
   lazy val chatEngine = wire[ChatEngine]
   lazy val engineIOController: EngineIOController = chatEngine.controller

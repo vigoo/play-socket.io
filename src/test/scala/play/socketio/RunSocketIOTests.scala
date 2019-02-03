@@ -3,13 +3,11 @@
  */
 package play.socketio
 
-import ch.racic.selenium.drivers.PhantomJSDriverHelper
-import org.openqa.selenium.phantomjs.{ PhantomJSDriver, PhantomJSDriverService }
-import org.openqa.selenium.remote.DesiredCapabilities
-import play.core.server.ServerConfig
 import java.util
 
+import org.openqa.selenium.firefox.{ FirefoxBinary, FirefoxDriver, FirefoxOptions }
 import play.api.{ Environment, LoggerConfigurator }
+import play.core.server.ServerConfig
 import play.socketio.javadsl.TestSocketIOJavaApplication
 import play.socketio.scaladsl.{ TestMultiNodeSocketIOApplication, TestSocketIOScalaApplication }
 import play.utils.Colors
@@ -27,15 +25,11 @@ object RunSocketIOTests extends App {
   val environment = Environment.simple()
   LoggerConfigurator(environment.classLoader).foreach(_.configure(environment))
 
-  val capabilities = DesiredCapabilities.phantomjs()
-
-  capabilities.setCapability(
-    PhantomJSDriverService.PHANTOMJS_EXECUTABLE_PATH_PROPERTY,
-    PhantomJSDriverHelper.executable64().getAbsolutePath
-  )
-  capabilities.setCapability(PhantomJSDriverService.PHANTOMJS_CLI_ARGS, Array("--webdriver-loglevel=WARN"))
-
-  val driver = new PhantomJSDriver(capabilities)
+  val binary = new FirefoxBinary()
+  val options = new FirefoxOptions()
+    .setBinary(binary)
+    .setHeadless(true)
+  val driver = new FirefoxDriver(options)
 
   Runtime.getRuntime.addShutdownHook(new Thread(new Runnable {
     def run(): Unit = driver.quit()
@@ -76,7 +70,7 @@ object RunSocketIOTests extends App {
     }
 
     @annotation.tailrec
-    def consume(driver: PhantomJSDriver, start: Long): Unit = {
+    def consume(driver: FirefoxDriver, start: Long): Unit = {
       var end = false
       driver.executeScript("return consumeMochaEvents();") match {
         case list: util.List[_] =>

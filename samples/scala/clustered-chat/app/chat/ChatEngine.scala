@@ -3,43 +3,43 @@ package chat
 import akka.NotUsed
 import akka.actor.ActorSystem
 import akka.cluster.pubsub.DistributedPubSub
-import akka.cluster.pubsub.DistributedPubSubMediator.{Publish, Subscribe}
+import akka.cluster.pubsub.DistributedPubSubMediator.{ Publish, Subscribe }
 import akka.stream._
-import akka.stream.scaladsl.{BroadcastHub, Flow, MergeHub, Sink, Source}
+import akka.stream.scaladsl.{ BroadcastHub, Flow, MergeHub, Sink, Source }
 import play.api.Logger
-import play.api.libs.json.{Format, Json}
+import play.api.libs.json.{ Format, Json }
 import play.engineio.EngineIOController
 import play.api.libs.functional.syntax._
 import play.socketio.scaladsl.SocketIO
 
-  /**
-    * A chat event, either a message, a join room, or a leave room event.
-    */
-  sealed trait ChatEvent {
-    def user: Option[User]
-    def room: String
-  }
+/**
+ * A chat event, either a message, a join room, or a leave room event.
+ */
+sealed trait ChatEvent {
+  def user: Option[User]
+  def room: String
+}
 
-  case class ChatMessage(user: Option[User], room: String, message: String) extends ChatEvent
-  object ChatMessage {
-    implicit val format: Format[ChatMessage] = Json.format
-  }
+case class ChatMessage(user: Option[User], room: String, message: String) extends ChatEvent
+object ChatMessage {
+  implicit val format: Format[ChatMessage] = Json.format
+}
 
-  case class JoinRoom(user: Option[User], room: String) extends ChatEvent
-  object JoinRoom {
-    implicit val format: Format[JoinRoom] = Json.format
-  }
+case class JoinRoom(user: Option[User], room: String) extends ChatEvent
+object JoinRoom {
+  implicit val format: Format[JoinRoom] = Json.format
+}
 
-  case class LeaveRoom(user: Option[User], room: String) extends ChatEvent
-  object LeaveRoom {
-    implicit val format: Format[LeaveRoom] = Json.format
-  }
+case class LeaveRoom(user: Option[User], room: String) extends ChatEvent
+object LeaveRoom {
+  implicit val format: Format[LeaveRoom] = Json.format
+}
 
-  case class User(name: String)
-  object User {
-    // We're just encoding user as a simple string, not an object
-    implicit val format: Format[User] = implicitly[Format[String]].inmap(User.apply, _.name)
-  }
+case class User(name: String)
+object User {
+  // We're just encoding user as a simple string, not an object
+  implicit val format: Format[User] = implicitly[Format[String]].inmap(User.apply, _.name)
+}
 
 object ChatProtocol {
   import play.socketio.scaladsl.SocketIOEventCodec._
@@ -61,6 +61,7 @@ class ChatEngine(socketIO: SocketIO, system: ActorSystem)(implicit mat: Material
 
   import ChatProtocol._
 
+  val logger = Logger(classOf[ChatEngine])
   val mediator = DistributedPubSub(system).mediator
 
   // This gets a chat room using Akka distributed pubsub
@@ -132,7 +133,7 @@ class ChatEngine(socketIO: SocketIO, system: ActorSystem)(implicit mat: Material
 
   val controller: EngineIOController = socketIO.builder
     .onConnect { (request, sid) =>
-      Logger.info(s"Starting $sid session")
+      logger.info(s"Starting $sid session")
       // Extract the username from the header
       val username = request.getQueryString("user").getOrElse {
         throw new RuntimeException("No user parameter")

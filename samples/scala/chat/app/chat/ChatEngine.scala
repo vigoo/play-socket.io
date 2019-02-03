@@ -1,15 +1,15 @@
 package chat
 
 import akka.stream.Materializer
-import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub}
+import akka.stream.scaladsl.{ BroadcastHub, Flow, Keep, MergeHub }
 import play.api.libs.json.Format
 import play.engineio.EngineIOController
 import play.api.libs.functional.syntax._
 import play.socketio.scaladsl.SocketIO
 
 /**
-  * A simple chat engine.
-  */
+ * A simple chat engine.
+ */
 class ChatEngine(socketIO: SocketIO)(implicit mat: Materializer) {
 
   import play.socketio.scaladsl.SocketIOEventCodec._

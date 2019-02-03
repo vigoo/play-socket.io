@@ -1,13 +1,13 @@
 package chat
 
 import akka.actor.ExtendedActorSystem
-import akka.serialization.{BaseSerializer, SerializerWithStringManifest}
+import akka.serialization.{ BaseSerializer, SerializerWithStringManifest }
 import play.api.libs.json.Json
 
 /**
-  * Since messages sent through distributed pubsub go over Akka remoting, they need to be
-  * serialized. This serializer serializes them as JSON.
-  */
+ * Since messages sent through distributed pubsub go over Akka remoting, they need to be
+ * serialized. This serializer serializes them as JSON.
+ */
 class ChatEventSerializer(val system: ExtendedActorSystem) extends SerializerWithStringManifest with BaseSerializer {
   override def manifest(o: AnyRef) = o match {
     case _: ChatMessage => "M"

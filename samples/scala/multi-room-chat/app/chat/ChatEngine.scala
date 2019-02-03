@@ -2,8 +2,8 @@ package chat
 
 import akka.NotUsed
 import akka.stream._
-import akka.stream.scaladsl.{BroadcastHub, Flow, Keep, MergeHub, Sink, Source}
-import play.api.libs.json.{Format, Json}
+import akka.stream.scaladsl.{ BroadcastHub, Flow, Keep, MergeHub, Sink, Source }
+import play.api.libs.json.{ Format, Json }
 import play.engineio.EngineIOController
 import play.api.libs.functional.syntax._
 import play.socketio.scaladsl.SocketIO
@@ -13,8 +13,8 @@ import scala.collection.concurrent.TrieMap
 object ChatProtocol {
 
   /**
-    * A chat event, either a message, a join room, or a leave room event.
-    */
+   * A chat event, either a message, a join room, or a leave room event.
+   */
   sealed trait ChatEvent {
     def user: Option[User]
     def room: String

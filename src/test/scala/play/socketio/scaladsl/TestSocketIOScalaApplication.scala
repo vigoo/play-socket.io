@@ -6,6 +6,7 @@ package play.socketio.scaladsl
 import akka.stream.{ Materializer, OverflowStrategy }
 import akka.stream.scaladsl.{ BroadcastHub, Flow, Keep, Sink, Source }
 import controllers.{ AssetsComponents, ExternalAssets }
+import play.api.ApplicationLoader.Context
 import play.api._
 import play.api.libs.json.JsString
 import play.api.routing.Router
@@ -38,7 +39,7 @@ class TestSocketIOScalaApplication(initialSettings: Map[String, AnyRef]) extends
 
   def createComponents(routerBuilder: (ExternalAssets, EngineIOController, ExecutionContext) => Router): BuiltInComponents = {
 
-    val components = new BuiltInComponentsFromContext(ApplicationLoader.createContext(
+    val components = new BuiltInComponentsFromContext(Context.create(
       Environment.simple(),
       initialSettings = initialSettings
     )) with SocketIOComponents with AssetsComponents {
